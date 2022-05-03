@@ -71,18 +71,19 @@ export type TestByTeacher = TeacherDisciplines & {
   tests: Test[];
 };
 
-async function getTestsByDiscipline(token: string) {
+async function getTestsByDiscipline(token: string, searchDiscipline: string) {
   const config = getConfig(token);
   return baseAPI.get<{ tests: TestByDiscipline[] }>(
-    "/tests?groupBy=disciplines",
+    `/tests?groupBy=disciplines&&search=${searchDiscipline}`,
     config
   );
 }
 
-async function getTestsByTeacher(token: string) {
+async function getTestsByTeacher(token: string, searchTeacher: string) {
   const config = getConfig(token);
+  console.log(searchTeacher);
   return baseAPI.get<{ tests: TestByTeacher[] }>(
-    "/tests?groupBy=teachers",
+    `/tests?groupBy=teachers&&search=${searchTeacher}`,
     config
   );
 }

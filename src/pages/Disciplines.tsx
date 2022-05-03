@@ -10,7 +10,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import api, {
@@ -26,24 +26,34 @@ function Disciplines() {
   const { token } = useAuth();
   const [terms, setTerms] = useState<TestByDiscipline[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [searchDiscipline, setSearchDiscipline] = useState("");
 
   useEffect(() => {
     async function loadPage() {
       if (!token) return;
 
-      const { data: testsData } = await api.getTestsByDiscipline(token);
+      const { data: testsData } = await api.getTestsByDiscipline(
+        token,
+        searchDiscipline
+      );
       setTerms(testsData.tests);
       const { data: categoriesData } = await api.getCategories(token);
       setCategories(categoriesData.categories);
     }
     loadPage();
-  }, [token]);
+  }, [token, searchDiscipline]);
+
+  const handleSearchDiscipline = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchDiscipline(event.target.value);
+  };
 
   return (
     <>
       <TextField
         sx={{ marginX: "auto", marginBottom: "25px", width: "450px" }}
         label="Pesquise por disciplina"
+        value={searchDiscipline}
+        onChange={handleSearchDiscipline}
       />
       <Divider sx={{ marginBottom: "35px" }} />
       <Box

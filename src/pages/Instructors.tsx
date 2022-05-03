@@ -10,7 +10,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import api, {
@@ -27,24 +27,34 @@ function Instructors() {
     TestByTeacher[]
   >([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [searchTeacher, setSearchTeacher] = useState("");
 
   useEffect(() => {
     async function loadPage() {
       if (!token) return;
 
-      const { data: testsData } = await api.getTestsByTeacher(token);
+      const { data: testsData } = await api.getTestsByTeacher(
+        token,
+        searchTeacher
+      );
       setTeachersDisciplines(testsData.tests);
       const { data: categoriesData } = await api.getCategories(token);
       setCategories(categoriesData.categories);
     }
     loadPage();
-  }, [token]);
+  }, [token, searchTeacher]);
+
+  const handleSearchTeacher = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchTeacher(event.target.value);
+  };
 
   return (
     <>
       <TextField
         sx={{ marginX: "auto", marginBottom: "25px", width: "450px" }}
         label="Pesquise por pessoa instrutora"
+        value={searchTeacher}
+        onChange={handleSearchTeacher}
       />
       <Divider sx={{ marginBottom: "35px" }} />
       <Box
